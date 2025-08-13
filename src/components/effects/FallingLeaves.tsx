@@ -1,55 +1,74 @@
 'use client';
 
+import { useEffect, useState, useMemo } from 'react';
+
+// Performance detection - ONLY check for reduced motion preference
+const shouldReduceAnimations = () => {
+  if (typeof window === 'undefined') return false;
+  
+  // ONLY check for reduced motion preference - don't disable on mobile
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  return prefersReducedMotion;
+};
+
 export default function FallingLeaves() {
+  const [shouldAnimate, setShouldAnimate] = useState(true);
+  
+  useEffect(() => {
+    // Only check for reduced motion preference
+    const reduceAnimations = shouldReduceAnimations();
+    setShouldAnimate(!reduceAnimations);
+  }, []);
+  
+  // Generate leaves dynamically
+  const leafElements = useMemo(() => {
+    if (!shouldAnimate) return [];
+    
+    const leafCount = 12; // Reduced count for subtlety
+    const leaves = ['🍃', '🌿', '🍀', '🌾', '🌱'];
+    const colors = ['#22c55e', '#16a34a', '#10b981', '#86efac'];
+    
+    return Array.from({ length: leafCount }, (_, i) => ({
+      id: i,
+      emoji: leaves[i % leaves.length],
+      color: colors[i % colors.length],
+      left: Math.random() * 100,
+      duration: 8 + Math.random() * 8, // 8-16s
+      delay: Math.random() * 5, // Reduced delay for immediate start
+      opacity: 0.15 + Math.random() * 0.15, // 0.15-0.3 (much more subtle)
+      size: 0.8 + Math.random() * 0.3 // 0.8-1.1em (smaller)
+    }));
+  }, [shouldAnimate]);
+  
+  if (!shouldAnimate) {
+    return null;
+  }
+  
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: -1 }}>
-      {/* Continuous stream of leaves - like the working lizard-tapper version */}
-      
-      {/* Row 1 - quick falls */}
-      <div className="absolute text-sm opacity-60" style={{ left: '5%', color: '#22c55e', animation: 'leafFallSway 8s linear infinite' }}>🍃</div>
-      <div className="absolute text-sm opacity-50" style={{ left: '15%', color: '#16a34a', animation: 'leafFallSway 10s linear infinite', animationDelay: '1s' }}>🌿</div>
-      <div className="absolute text-xs opacity-40" style={{ left: '25%', color: '#10b981', animation: 'leafFallSway 12s linear infinite', animationDelay: '2s' }}>🍀</div>
-      <div className="absolute text-sm opacity-55" style={{ left: '35%', color: '#86efac', animation: 'leafFallSway 9s linear infinite', animationDelay: '0.5s' }}>🌾</div>
-      <div className="absolute text-xs opacity-45" style={{ left: '45%', color: '#22c55e', animation: 'leafFallSway 11s linear infinite', animationDelay: '3s' }}>🌱</div>
-      <div className="absolute text-sm opacity-50" style={{ left: '55%', color: '#16a34a', animation: 'leafFallSway 13s linear infinite', animationDelay: '1.5s' }}>🍃</div>
-      <div className="absolute text-xs opacity-60" style={{ left: '65%', color: '#10b981', animation: 'leafFallSway 7s linear infinite', animationDelay: '4s' }}>🌿</div>
-      <div className="absolute text-sm opacity-40" style={{ left: '75%', color: '#86efac', animation: 'leafFallSway 14s linear infinite', animationDelay: '2.5s' }}>🍀</div>
-      <div className="absolute text-xs opacity-55" style={{ left: '85%', color: '#22c55e', animation: 'leafFallSway 9s linear infinite', animationDelay: '0.8s' }}>🌾</div>
-      <div className="absolute text-sm opacity-45" style={{ left: '95%', color: '#16a34a', animation: 'leafFallSway 12s linear infinite', animationDelay: '3.5s' }}>🌱</div>
-      
-      {/* Row 2 - offset positions for denser effect */}
-      <div className="absolute text-xs opacity-50" style={{ left: '8%', color: '#10b981', animation: 'leafFallSway 10s linear infinite', animationDelay: '5s' }}>🍃</div>
-      <div className="absolute text-sm opacity-40" style={{ left: '18%', color: '#86efac', animation: 'leafFallSway 8s linear infinite', animationDelay: '6s' }}>🌿</div>
-      <div className="absolute text-xs opacity-60" style={{ left: '28%', color: '#22c55e', animation: 'leafFallSway 11s linear infinite', animationDelay: '7s' }}>🍀</div>
-      <div className="absolute text-sm opacity-45" style={{ left: '38%', color: '#16a34a', animation: 'leafFallSway 13s linear infinite', animationDelay: '6.5s' }}>🌾</div>
-      <div className="absolute text-xs opacity-55" style={{ left: '48%', color: '#10b981', animation: 'leafFallSway 9s linear infinite', animationDelay: '8s' }}>🌱</div>
-      <div className="absolute text-sm opacity-50" style={{ left: '58%', color: '#86efac', animation: 'leafFallSway 7s linear infinite', animationDelay: '5.5s' }}>🍃</div>
-      <div className="absolute text-xs opacity-40" style={{ left: '68%', color: '#22c55e', animation: 'leafFallSway 12s linear infinite', animationDelay: '9s' }}>🌿</div>
-      <div className="absolute text-sm opacity-60" style={{ left: '78%', color: '#16a34a', animation: 'leafFallSway 10s linear infinite', animationDelay: '7.5s' }}>🍀</div>
-      <div className="absolute text-xs opacity-45" style={{ left: '88%', color: '#10b981', animation: 'leafFallSway 14s linear infinite', animationDelay: '8.5s' }}>🌾</div>
-      
-      {/* Row 3 - even more density */}
-      <div className="absolute text-sm opacity-35" style={{ left: '12%', color: '#86efac', animation: 'leafFallSway 6s linear infinite', animationDelay: '10s' }}>🍃</div>
-      <div className="absolute text-xs opacity-45" style={{ left: '22%', color: '#22c55e', animation: 'leafFallSway 15s linear infinite', animationDelay: '11s' }}>🌿</div>
-      <div className="absolute text-sm opacity-50" style={{ left: '32%', color: '#16a34a', animation: 'leafFallSway 9s linear infinite', animationDelay: '12s' }}>🍀</div>
-      <div className="absolute text-xs opacity-40" style={{ left: '42%', color: '#10b981', animation: 'leafFallSway 11s linear infinite', animationDelay: '10.5s' }}>🌾</div>
-      <div className="absolute text-sm opacity-55" style={{ left: '52%', color: '#86efac', animation: 'leafFallSway 8s linear infinite', animationDelay: '13s' }}>🌱</div>
-      <div className="absolute text-xs opacity-50" style={{ left: '62%', color: '#22c55e', animation: 'leafFallSway 12s linear infinite', animationDelay: '11.5s' }}>🍃</div>
-      <div className="absolute text-sm opacity-40" style={{ left: '72%', color: '#16a34a', animation: 'leafFallSway 7s linear infinite', animationDelay: '14s' }}>🌿</div>
-      <div className="absolute text-xs opacity-60" style={{ left: '82%', color: '#10b981', animation: 'leafFallSway 13s linear infinite', animationDelay: '12.5s' }}>🍀</div>
-      <div className="absolute text-sm opacity-45" style={{ left: '92%', color: '#86efac', animation: 'leafFallSway 10s linear infinite', animationDelay: '15s' }}>🌾</div>
-      
-      {/* Row 4 - final layer */}
-      <div className="absolute text-xs opacity-30" style={{ left: '3%', color: '#22c55e', animation: 'leafFallSway 14s linear infinite', animationDelay: '16s' }}>🍃</div>
-      <div className="absolute text-sm opacity-40" style={{ left: '13%', color: '#16a34a', animation: 'leafFallSway 6s linear infinite', animationDelay: '17s' }}>🌿</div>
-      <div className="absolute text-xs opacity-55" style={{ left: '23%', color: '#10b981', animation: 'leafFallSway 11s linear infinite', animationDelay: '18s' }}>🍀</div>
-      <div className="absolute text-sm opacity-35" style={{ left: '33%', color: '#86efac', animation: 'leafFallSway 9s linear infinite', animationDelay: '16.5s' }}>🌾</div>
-      <div className="absolute text-xs opacity-50" style={{ left: '43%', color: '#22c55e', animation: 'leafFallSway 12s linear infinite', animationDelay: '19s' }}>🌱</div>
-      <div className="absolute text-sm opacity-45" style={{ left: '53%', color: '#16a34a', animation: 'leafFallSway 8s linear infinite', animationDelay: '17.5s' }}>🍃</div>
-      <div className="absolute text-xs opacity-40" style={{ left: '63%', color: '#10b981', animation: 'leafFallSway 15s linear infinite', animationDelay: '20s' }}>🌿</div>
-      <div className="absolute text-sm opacity-60" style={{ left: '73%', color: '#86efac', animation: 'leafFallSway 7s linear infinite', animationDelay: '18.5s' }}>🍀</div>
-      <div className="absolute text-xs opacity-35" style={{ left: '83%', color: '#22c55e', animation: 'leafFallSway 13s linear infinite', animationDelay: '21s' }}>🌾</div>
-      <div className="absolute text-sm opacity-50" style={{ left: '93%', color: '#16a34a', animation: 'leafFallSway 10s linear infinite', animationDelay: '19.5s' }}>🌱</div>
+    <div 
+      className="fixed inset-0 pointer-events-none overflow-hidden" 
+      style={{ zIndex: 0 }}
+      aria-hidden="true"
+    >
+      {/* Dynamic, performance-optimized leaves */}
+      {leafElements.map((leaf) => (
+        <div
+          key={leaf.id}
+          className="absolute leaf-animation"
+          style={{
+            left: `${leaf.left}%`,
+            color: leaf.color,
+            opacity: leaf.opacity,
+            fontSize: `${leaf.size}em`,
+            animation: `leafFallSway ${leaf.duration}s linear infinite`,
+            animationDelay: `${leaf.delay}s`,
+            willChange: 'transform'
+          }}
+          aria-hidden="true"
+        >
+          {leaf.emoji}
+        </div>
+      ))}
     </div>
   );
 }

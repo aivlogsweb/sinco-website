@@ -159,7 +159,7 @@
 /* Custom animations for leaf falling with enhanced sway */
 @keyframes leafFallSway {
   0% {
-    transform: translateY(-100px) translateX(0px) rotate(0deg);
+    transform: translateY(0vh) translateX(0px) rotate(0deg);
   }
   15% {
     transform: translateY(15vh) translateX(-25px) rotate(45deg);

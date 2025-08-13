@@ -1,11 +1,15 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { ExternalLink, RefreshCw } from 'lucide-react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { ExternalLink, RefreshCw, Play, Pause } from 'lucide-react';
 import { siteConfig } from '@/data/config';
 import { trackEvent } from '@/lib/utils';
+import { detectDeviceCapabilities, getOptimalVideoSettings, type DeviceCapabilities } from '@/lib/deviceDetection';
+import { trackVideoPerformance, logPerformanceError } from '@/lib/performanceMonitor';
+import { useVideoThumbnail } from '@/lib/videoThumbnail';
 import SocialEmbed from '@/components/ui/SocialEmbed';
 import SimpleVideoPlayer from '@/components/ui/SimpleVideoPlayer';
+import VideoThumbnail from '@/components/ui/VideoThumbnail';
 
 interface MediaItem {
   id: string;
@@ -23,7 +27,59 @@ export default function MediaGallery() {
   const [isVisible, setIsVisible] = useState(false);
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [activeVideoIndex, setActiveVideoIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [loadedVideos, setLoadedVideos] = useState<Set<number>>(new Set());
+  const [deviceCapabilities, setDeviceCapabilities] = useState<DeviceCapabilities | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
+
+  // Initialize device detection
+  useEffect(() => {
+    setDeviceCapabilities(detectDeviceCapabilities());
+  }, []);
+
+  // Video controls
+  const playVideo = useCallback((index: number) => {
+    const video = videoRefs.current[index];
+    if (video) {
+      // Pause all other videos first
+      videoRefs.current.forEach((v, i) => {
+        if (v && i !== index) {
+          v.pause();
+        }
+      });
+      video.play();
+      setIsPlaying(true);
+      setActiveVideoIndex(index);
+    }
+  }, []);
+
+  const pauseVideo = useCallback((index: number) => {
+    const video = videoRefs.current[index];
+    if (video) {
+      video.pause();
+      setIsPlaying(false);
+    }
+  }, []);
+
+  // Lazy load video when it comes into view
+  const loadVideo = useCallback((index: number) => {
+    if (!loadedVideos.has(index)) {
+      const startTime = performance.now();
+      setLoadedVideos(prev => new Set(prev).add(index));
+      
+      // Track video loading performance
+      const video = videoRefs.current[index];
+      if (video) {
+        video.addEventListener('loadeddata', () => {
+          // Get video source from mediaItems instead of currentContent
+          const videoSrc = mediaItems[index]?.videoSrc || '';
+          trackVideoPerformance(videoSrc, startTime);
+        }, { once: true });
+      }
+    }
+  }, [loadedVideos, mediaItems]);
 
   // Load content from admin panel
   useEffect(() => {
@@ -140,8 +196,8 @@ export default function MediaGallery() {
 
     window.addEventListener('storage', handleStorageChange);
     
-    // Also listen for manual refresh
-    const interval = setInterval(loadContent, 30000); // Refresh every 30 seconds
+    // Also listen for manual refresh (reduced frequency for performance)
+    const interval = setInterval(loadContent, 60000); // Refresh every minute
 
     return () => {
       window.removeEventListener('storage', handleStorageChange);
@@ -240,36 +296,211 @@ export default function MediaGallery() {
             </div>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px', padding: '0 20px' }}>
-            {currentContent.map((item, index) => (
-              <div key={item.id} style={{ backgroundColor: '#1a4a2e', padding: '15px', borderRadius: '8px' }}>
-                {item.videoSrc ? (
-                  <div>
-                    <h3 style={{ color: '#22c55e', marginBottom: '10px', fontSize: '16px' }}>{item.title}</h3>
-                    <video
-                      style={{ 
-                        width: '100%', 
-                        height: '400px',
-                        objectFit: 'cover',
-                        borderRadius: '8px' 
-                      }}
-                      loop
-                      muted
-                      playsInline
-                      autoPlay
+          <div className="max-w-4xl mx-auto">
+            {/* Mobile-optimized single video player */}
+            {deviceCapabilities?.isMobile ? (
+              <div className="space-y-6">
+                {/* Video Navigation */}
+                <div className="flex justify-center items-center gap-4 mb-6">
+                  <button
+                    onClick={() => {
+                      const prevIndex = activeVideoIndex > 0 ? activeVideoIndex - 1 : currentContent.length - 1;
+                      setActiveVideoIndex(prevIndex);
+                      setIsPlaying(false);
+                    }}
+                    className="p-3 bg-sinco-primary/20 hover:bg-sinco-primary/40 rounded-full transition-colors"
+                    disabled={currentContent.length <= 1}
+                  >
+                    <span className="text-white text-xl">‹</span>
+                  </button>
+                  
+                  <span className="text-sinco-cream text-sm px-4 py-2 bg-black/30 rounded-full">
+                    {activeVideoIndex + 1} of {currentContent.length}
+                  </span>
+                  
+                  <button
+                    onClick={() => {
+                      const nextIndex = activeVideoIndex < currentContent.length - 1 ? activeVideoIndex + 1 : 0;
+                      setActiveVideoIndex(nextIndex);
+                      setIsPlaying(false);
+                    }}
+                    className="p-3 bg-sinco-primary/20 hover:bg-sinco-primary/40 rounded-full transition-colors"
+                    disabled={currentContent.length <= 1}
+                  >
+                    <span className="text-white text-xl">›</span>
+                  </button>
+                </div>
+                
+                {/* Single Active Video */}
+                {currentContent[activeVideoIndex] && (
+                  <div className="bg-forest-800/60 backdrop-blur-md rounded-xl p-6 border border-sinco-primary/30">
+                    <h3 className="text-sinco-primary text-lg font-semibold mb-3">
+                      {currentContent[activeVideoIndex].title}
+                    </h3>
+                    
+                    <div className="relative aspect-[9/16] max-w-sm mx-auto mb-4">
+                      {loadedVideos.has(activeVideoIndex) ? (
+                        <video
+                          ref={(el) => {
+                            videoRefs.current[activeVideoIndex] = el;
+                          }}
+                          className="w-full h-full object-cover rounded-lg"
+                          loop
+                          muted={deviceCapabilities ? getOptimalVideoSettings(deviceCapabilities).muted : true}
+                          playsInline={deviceCapabilities ? getOptimalVideoSettings(deviceCapabilities).playsInline : true}
+                          preload={deviceCapabilities ? 
+                            (loadedVideos.has(activeVideoIndex) ? getOptimalVideoSettings(deviceCapabilities).preload : "none") 
+                            : "metadata"}
+                          controls={deviceCapabilities?.isMobile || false}
+                          onLoadStart={() => loadVideo(activeVideoIndex)}
+                          onPlay={() => setIsPlaying(true)}
+                          onPause={() => setIsPlaying(false)}
+                          onError={(e) => {
+                            console.warn('Video failed to load:', e);
+                            logPerformanceError(new Error('Video load failed'), 'MediaGallery');
+                            // Fallback: try to load next video or show error state
+                          }}
+                        >
+                          <source src={currentContent[activeVideoIndex].videoSrc} type="video/mp4" />
+                        </video>
+                      ) : currentContent[activeVideoIndex].videoSrc ? (
+                        <VideoThumbnail
+                          videoSrc={currentContent[activeVideoIndex].videoSrc}
+                          className="w-full h-full"
+                          alt={currentContent[activeVideoIndex].title}
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-forest-900 to-forest-800 rounded-lg flex items-center justify-center">
+                          <div className="text-center">
+                            <div className="text-2xl mb-2">🐿️</div>
+                            <p className="text-sinco-primary text-sm font-medium">SINCO</p>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Play/Pause Overlay */}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <button
+                          onClick={() => {
+                            const video = videoRefs.current[activeVideoIndex];
+                            if (video) {
+                              if (isPlaying) {
+                                video.pause();
+                              } else {
+                                if (!loadedVideos.has(activeVideoIndex)) {
+                                  loadVideo(activeVideoIndex);
+                                }
+                                video.play();
+                              }
+                            }
+                          }}
+                          className="w-16 h-16 bg-black/50 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-black/70 transition-all"
+                        >
+                          {isPlaying && activeVideoIndex === activeVideoIndex ? (
+                            <Pause className="w-8 h-8 text-white" />
+                          ) : (
+                            <Play className="w-8 h-8 text-white ml-1" />
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <p className="text-sinco-cream/80 text-sm mb-4">
+                      {currentContent[activeVideoIndex].description}
+                    </p>
+                    
+                    <a
+                      href={currentContent[activeVideoIndex].url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-sinco-primary hover:text-sinco-secondary text-sm font-medium"
                     >
-                      <source src={item.videoSrc} type="video/mp4" />
-                      Video not supported.
-                    </video>
-                    <p style={{ color: '#a3a3a3', fontSize: '14px', marginTop: '8px' }}>{item.description}</p>
-                  </div>
-                ) : (
-                  <div style={{ color: 'white', height: '400px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    Instagram: {item.title}
+                      View on TikTok <ExternalLink className="w-4 h-4" />
+                    </a>
                   </div>
                 )}
               </div>
-            ))}
+            ) : (
+              /* Desktop Grid - Load videos on demand */
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {currentContent.map((item, index) => (
+                  <div key={item.id} className="bg-forest-800/60 backdrop-blur-md rounded-xl p-4 border border-sinco-primary/30 hover:border-sinco-primary/50 transition-all">
+                    {item.videoSrc ? (
+                      <div>
+                        <h3 className="text-sinco-primary text-lg font-semibold mb-3">{item.title}</h3>
+                        <div className="relative aspect-[9/16] mb-3">
+                          {loadedVideos.has(index) ? (
+                            <video
+                              ref={(el) => {
+                                videoRefs.current[index] = el;
+                              }}
+                              className="w-full h-full object-cover rounded-lg"
+                              loop
+                              muted
+                              playsInline
+                              preload={loadedVideos.has(index) ? "metadata" : "none"}
+                              onClick={() => {
+                                const video = videoRefs.current[index];
+                                if (video) {
+                                  if (video.paused) {
+                                    playVideo(index);
+                                  } else {
+                                    pauseVideo(index);
+                                  }
+                                }
+                              }}
+                            >
+                              <source src={item.videoSrc} type="video/mp4" />
+                            </video>
+                          ) : item.videoSrc ? (
+                            <VideoThumbnail
+                              videoSrc={item.videoSrc}
+                              className="w-full h-full"
+                              alt={item.title}
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-forest-900 to-forest-800 rounded-lg flex items-center justify-center">
+                              <div className="text-center">
+                                <div className="text-2xl mb-2">🐿️</div>
+                                <p className="text-sinco-primary text-sm font-medium">SINCO</p>
+                              </div>
+                            </div>
+                          )}
+                          
+                          {/* Play button overlay */}
+                          <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                            <button
+                              className="w-12 h-12 bg-black/50 backdrop-blur-sm rounded-full flex items-center justify-center"
+                              onClick={() => {
+                                if (!loadedVideos.has(index)) {
+                                  loadVideo(index);
+                                }
+                                playVideo(index);
+                              }}
+                            >
+                              <Play className="w-6 h-6 text-white ml-0.5" />
+                            </button>
+                          </div>
+                        </div>
+                        <p className="text-sinco-cream/80 text-sm mb-3">{item.description}</p>
+                        <a
+                          href={item.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-sinco-primary hover:text-sinco-secondary text-sm font-medium"
+                        >
+                          View Original <ExternalLink className="w-3 h-3" />
+                        </a>
+                      </div>
+                    ) : (
+                      <div className="aspect-[9/16] flex items-center justify-center text-white bg-forest-700 rounded-lg">
+                        Instagram: {item.title}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

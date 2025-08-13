@@ -7,7 +7,7 @@ import dynamic from 'next/dynamic';
 import Hero from '@/components/sections/Hero';
 import About from '@/components/sections/About';
 import Community from '@/components/sections/Community';
-import { DebugPanel } from '@/components/debug/DebugLogger';
+
 
 // Dynamic import for performance (client-only components)
 const FallingLeaves = dynamic(() => import('@/components/effects/FallingLeaves'), {
@@ -58,9 +58,6 @@ export default function Home() {
       </section>
       
       <Community />
-      
-      {/* Debug Panel - only visible when needed */}
-      <DebugPanel />
       
       {/* Footer */}
       <footer className="relative py-12 px-4 border-t border-sinco-primary border-opacity-20">
