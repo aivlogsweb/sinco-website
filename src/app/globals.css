@@ -1,0 +1,254 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-forest-gradient text-sinco-cream min-h-screen;
+    background-attachment: fixed;
+  }
+
+  * {
+    @apply selection:bg-sinco-primary selection:text-white;
+  }
+}
+
+@layer components {
+  /* Social Media Buttons */
+  .social-button {
+    @apply bg-sinco-primary hover:bg-sinco-secondary text-white font-semibold py-3 px-6 rounded-xl 
+           transition-all duration-300 transform hover:scale-105 active:scale-95
+           shadow-lg hover:shadow-xl flex items-center justify-center gap-3
+           border-2 border-sinco-light border-opacity-20 hover:border-opacity-40
+           backdrop-blur-sm bg-opacity-90 hover:bg-opacity-100
+           text-center cursor-pointer select-none;
+    
+    /* Mobile optimizations */
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    -webkit-touch-callout: none;
+    user-select: none;
+  }
+
+  .social-button:hover {
+    box-shadow: 0 12px 40px rgba(34, 197, 94, 0.3), 
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+
+  /* Contract Address Display */
+  .contract-display {
+    @apply bg-forest-900 bg-opacity-80 backdrop-blur-md rounded-lg p-4 
+           text-sinco-cream font-mono text-sm border-2 border-sinco-primary 
+           border-opacity-40 cursor-pointer hover:bg-opacity-90 
+           transition-all duration-300 shadow-lg hover:shadow-xl
+           hover:border-opacity-60 group;
+  }
+
+  /* Copy Button */
+  .copy-button {
+    @apply bg-sinco-primary hover:bg-sinco-secondary text-white font-medium py-2 px-4 rounded-lg
+           transition-all duration-300 transform hover:scale-105 active:scale-95
+           shadow-md hover:shadow-lg flex items-center gap-2
+           border border-sinco-light border-opacity-20 hover:border-opacity-40
+           cursor-pointer select-none;
+    
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    user-select: none;
+  }
+
+  /* Hero Section */
+  .hero-title {
+    @apply text-6xl md:text-8xl font-bold text-transparent bg-clip-text bg-gradient-to-br 
+           from-sinco-light via-sinco-primary to-sinco-accent
+           animate-fade-in text-center leading-tight;
+    text-shadow: 0 0 30px rgba(34, 197, 94, 0.5);
+  }
+
+  .hero-subtitle {
+    @apply text-xl md:text-2xl text-sinco-cream text-opacity-90 
+           animate-slide-up text-center max-w-2xl mx-auto leading-relaxed;
+  }
+
+  /* Content Cards */
+  .content-card {
+    @apply bg-forest-800 bg-opacity-60 backdrop-blur-md rounded-xl p-6
+           border border-sinco-primary border-opacity-30 
+           shadow-lg hover:shadow-xl transition-all duration-300
+           hover:border-opacity-50 hover:bg-opacity-80
+           transform hover:scale-105;
+  }
+
+  /* Media Container */
+  .media-container {
+    @apply relative rounded-lg overflow-hidden shadow-lg 
+           border border-sinco-primary border-opacity-30
+           hover:shadow-xl transition-all duration-300
+           hover:border-opacity-50;
+  }
+
+  /* Loading States */
+  .loading-shimmer {
+    @apply animate-pulse bg-gradient-to-r from-forest-700 via-forest-600 to-forest-700
+           bg-[length:200%_100%] rounded-lg;
+    animation: shimmer 2s infinite;
+  }
+
+  /* Newsletter Form */
+  .newsletter-input {
+    @apply bg-forest-800 bg-opacity-60 backdrop-blur-md border border-sinco-primary 
+           border-opacity-30 rounded-lg px-4 py-3 text-sinco-cream placeholder-sinco-cream 
+           placeholder-opacity-60 focus:outline-none focus:border-opacity-60 
+           focus:ring-2 focus:ring-sinco-primary focus:ring-opacity-30
+           transition-all duration-300;
+  }
+}
+
+@layer utilities {
+  .text-shadow {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  
+  .text-glow {
+    text-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
+  }
+
+  /* Scroll animations */
+  .animate-on-scroll {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  }
+
+  .animate-on-scroll.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Custom scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(20, 83, 45, 0.3);
+    border-radius: 4px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(34, 197, 94, 0.6);
+    border-radius: 4px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(34, 197, 94, 0.8);
+  }
+}
+
+/* Custom Animations */
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Custom animations for leaf falling with enhanced sway */
+@keyframes leafFallSway {
+  0% {
+    transform: translateY(-100px) translateX(0px) rotate(0deg);
+  }
+  15% {
+    transform: translateY(15vh) translateX(-25px) rotate(45deg);
+  }
+  30% {
+    transform: translateY(30vh) translateX(30px) rotate(-30deg);
+  }
+  45% {
+    transform: translateY(45vh) translateX(-20px) rotate(60deg);
+  }
+  60% {
+    transform: translateY(60vh) translateX(35px) rotate(-45deg);
+  }
+  75% {
+    transform: translateY(75vh) translateX(-30px) rotate(90deg);
+  }
+  90% {
+    transform: translateY(90vh) translateX(25px) rotate(-60deg);
+  }
+  100% {
+    transform: translateY(100vh) translateX(-10px) rotate(120deg);
+  }
+}
+
+/* Performance optimizations */
+.leaf-animation {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 768px) {
+  .hero-title {
+    @apply text-4xl md:text-6xl;
+  }
+  
+  .hero-subtitle {
+    @apply text-lg;
+  }
+
+  /* Mobile media gallery optimizations */
+  .media-grid-mobile {
+    @apply grid-cols-1 gap-6;
+  }
+
+  .tab-navigation-mobile {
+    @apply flex-col gap-2 px-4;
+  }
+
+  .tab-button-mobile {
+    @apply w-full justify-center py-3;
+  }
+
+  .social-embed-mobile {
+    @apply max-w-full;
+  }
+
+  .content-card-mobile {
+    @apply mx-2;
+  }
+}
+
+/* Improved responsive grid */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .media-grid-tablet {
+    @apply grid-cols-2 gap-6;
+  }
+}
+
+@media (min-width: 1024px) {
+  .media-grid-desktop {
+    @apply grid-cols-3 gap-8;
+  }
+}
+
+@media (min-width: 1280px) {
+  .media-grid-xl {
+    @apply grid-cols-4 gap-8;
+  }
+}
+
+/* Touch optimization for mobile */
+@media (hover: none) and (pointer: coarse) {
+  .hover-scale {
+    transform: none !important;
+  }
+  
+  .group:hover .group-hover\:scale-110 {
+    transform: none !important;
+  }
+}

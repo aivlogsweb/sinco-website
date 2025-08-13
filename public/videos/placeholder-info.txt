@@ -1,0 +1,52 @@
+🎥 Sinco Website Videos
+
+Place your video files here with these exact filenames for automatic integration:
+
+REQUIRED VIDEOS:
+- sinco-featured.mp4 (Main featured video)
+- sinco-clip-1.mp4 (Gallery video 1)
+- sinco-clip-2.mp4 (Gallery video 2)
+
+RECOMMENDED SPECS:
+- Resolution: 1280x720 (HD) or 1920x1080 (Full HD)
+- Format: MP4 (H.264 codec)
+- Length: 15-60 seconds for web optimization
+- File size: Under 10MB per video
+
+VIDEO THUMBNAILS:
+Create thumbnail images and place in /images/ folder:
+- sinco-video-thumb.jpg (for sinco-featured.mp4)
+- sinco-clip-thumb-1.jpg (for sinco-clip-1.mp4) 
+- sinco-clip-thumb-2.jpg (for sinco-clip-2.mp4)
+
+OPTIMIZATION TIPS:
+- Compress videos for web (use tools like HandBrake)
+- Consider hosting large videos on YouTube/Vimeo and embedding
+- Use thumbnails for faster page loading
+- Keep file sizes reasonable for mobile users
+
+MOBILE CONSIDERATIONS:
+- Most users will view on mobile
+- Ensure videos are optimized for vertical/square viewing
+- Test autoplay behavior (many mobile browsers block it)
+- Provide clear play buttons/indicators
+
+SOCIAL MEDIA INTEGRATION:
+- Export versions optimized for TikTok (vertical 9:16)
+- Create square versions for Instagram posts
+- Consider horizontal versions for YouTube
+
+To add new videos:
+1. Upload video files to this folder
+2. Create thumbnail images in /images/ folder
+3. Update src/data/config.ts with new video references
+4. Rebuild site with: npm run build && npm run export
+5. Upload new 'out' folder to your hosting
+
+PERFORMANCE TIP:
+For viral content with high traffic, consider using a video CDN like:
+- Cloudflare Stream
+- AWS CloudFront  
+- Vimeo Pro
+
+Need help? Check README.md for detailed instructions!

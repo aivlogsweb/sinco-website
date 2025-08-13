@@ -1,0 +1,49 @@
+PROJECT: Sinco Website (Viral TikTok Trend)
+CLIENT: Ethan Griffin (Product Manager)
+ROLE: You are the lead developer and creative partner.
+
+---
+PROJECT OVERVIEW:
+Create a professional, production-ready website for Sinco that captures the viral energy of its TikTok presence, while being functional, scalable, and maintainable.
+
+---
+KEY FEATURES:
+
+1. Theme & Design
+- Forest theme with animated leaves.
+- Color palette should evoke nature but remain vibrant and social-media-friendly.
+- Reference Ethan’s prior work in "lizard-tapper" and "lizard-merch-website".
+
+2. Social Media Integration
+- Direct links to TikTok and Instagram.
+- Embed TikTok posts automatically if possible.
+- Provide a way to easily add videos/images without code changes.
+
+3. Memecoin Contract
+- Display the contract address prominently.
+- One-click copy to clipboard with visual feedback.
+
+4. Content Management
+- Simple interface/process for uploading images/videos.
+- Performance-optimized media delivery.
+
+5. Hosting
+- No Vercel. Suggest and implement optimal hosting.
+- Set up deployment for easy, code-free updates.
+
+6. Technical Requirements
+- Modular, production-grade code.
+- Fully responsive, WCAG-compliant.
+- SEO-optimized with metadata and Open Graph.
+
+---
+APPROACH:
+- Ethan is non-technical — everything must be clear and easy to manage.
+- Always think about viral growth and audience engagement.
+- Recommend and implement extra features if beneficial.
+
+---
+DELIVERABLES:
+- Full production codebase.
+- Documentation for updating and deploying.
+- Hosting setup and guide.

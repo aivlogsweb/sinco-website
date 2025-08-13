@@ -1,0 +1,41 @@
+📸 Sinco Website Images
+
+Place your images here with these exact filenames for automatic integration:
+
+REQUIRED IMAGES:
+- sinco-featured-1.jpg (Main hero/featured image)
+- sinco-gallery-1.jpg (Gallery image 1)  
+- sinco-gallery-2.jpg (Gallery image 2)
+- sinco-video-thumb.jpg (Main video thumbnail)
+- sinco-clip-thumb-1.jpg (Video clip 1 thumbnail)
+- sinco-clip-thumb-2.jpg (Video clip 2 thumbnail)
+
+RECOMMENDED SIZES:
+- Featured images: 1200x800px or larger
+- Gallery images: 800x600px or larger  
+- Video thumbnails: 1280x720px (16:9 ratio)
+
+FORMATS SUPPORTED:
+- JPG/JPEG (best for photos)
+- PNG (best for graphics with transparency)
+- WebP (best for performance - recommended)
+
+OPTIMIZATION TIPS:
+- Keep file sizes under 500KB when possible
+- Use descriptive alt text in config.ts
+- Consider using WebP format for better performance
+- Compress images before uploading
+
+SEO/SOCIAL IMAGES:
+- sinco-og.png (1200x630px for Open Graph/Facebook)
+- sinco-twitter.png (1200x600px for Twitter cards)
+- icon-192.png (192x192px for PWA)
+- icon-512.png (512x512px for PWA)
+
+To add new images:
+1. Upload image files to this folder
+2. Update src/data/config.ts with new image references
+3. Rebuild site with: npm run build && npm run export
+4. Upload new 'out' folder to your hosting
+
+Need help? Check README.md for detailed instructions!
