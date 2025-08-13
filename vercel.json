@@ -1,15 +1,7 @@
 {
-  "buildCommand": "npm run build",
-  "framework": "nextjs",
+  "buildCommand": "npm run export",
+  "outputDirectory": "out",
   "installCommand": "npm install",
-  "outputDirectory": ".next",
-  "devCommand": "npm run dev",
-  "regions": ["iad1"],
-  "functions": {
-    "src/app/**/*.tsx": {
-      "runtime": "@vercel/node@20.x"
-    }
-  },
   "headers": [
     {
       "source": "/videos/(.*)",
