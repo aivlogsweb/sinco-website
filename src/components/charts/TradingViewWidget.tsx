@@ -9,7 +9,7 @@ interface DexScreenerChartProps {
 }
 
 export default function DexScreenerChart({ 
-  tokenAddress = 'HoQYRCnUeyZZyFiPtYDw48kHyGwjsaUXJxDVtxcK4yPg', 
+  tokenAddress = 'CONTRACT_ADDRESS_PLACEHOLDER_UPDATE_AT_LAUNCH', 
   className = '' 
 }: DexScreenerChartProps) {
   const [isLoaded, setIsLoaded] = useState(false);
