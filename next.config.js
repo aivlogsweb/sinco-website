@@ -1,7 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Remove static export for better deployment compatibility
-  trailingSlash: false,
+  // Static export for universal deployment compatibility
+  output: 'export',
+  trailingSlash: true,
+  distDir: 'out',
   images: {
     unoptimized: true
   },
@@ -15,19 +17,8 @@ const nextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
-  // Add better static file handling
-  async rewrites() {
-    return [
-      {
-        source: '/videos/:path*',
-        destination: '/videos/:path*',
-      },
-      {
-        source: '/images/:path*', 
-        destination: '/images/:path*',
-      },
-    ]
-  },
+  // Remove rewrites for static export
+  // Static export doesn't support rewrites
 }
 
 module.exports = nextConfig
