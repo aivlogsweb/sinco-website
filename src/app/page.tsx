@@ -97,7 +97,7 @@ export default function Home() {
           {/* Copyright */}
           <div className="pt-8 border-t border-sinco-primary border-opacity-20">
             <p className="text-sinco-cream text-opacity-60 text-sm">
-              © 2024 Sinco. All rights reserved. Built with 🌿 and ❤️
+              © 2025 Sinco. All rights reserved. Built with 🌿 and ❤️
             </p>
           </div>
         </div>
