@@ -16,7 +16,7 @@ interface StreamData {
   thumbnail: string;
 }
 
-export default function PumpFunWidget({ tokenAddress = 'CONTRACT_ADDRESS_PLACEHOLDER_UPDATE_AT_LAUNCH', className = '' }: PumpFunWidgetProps) {
+export default function PumpFunWidget({ tokenAddress = 'ARGNs9XYtU7YFMi2FVAEEeNsX7voLWsnD9cF8uNvpump', className = '' }: PumpFunWidgetProps) {
   const [streamData, setStreamData] = useState<StreamData>({
     isLive: false,
     viewerCount: 0,

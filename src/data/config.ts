@@ -25,7 +25,7 @@ export const siteConfig = {
   // Memecoin Information
   memecoin: {
     // Contract address - will be updated at launch
-    contractAddress: "CONTRACT_ADDRESS_PLACEHOLDER_UPDATE_AT_LAUNCH",
+    contractAddress: "ARGNs9XYtU7YFMi2FVAEEeNsX7voLWsnD9cF8uNvpump",
     network: "Solana", // or "Ethereum", "BSC", etc.
     symbol: "SINCO",
     name: "Sinco Token",

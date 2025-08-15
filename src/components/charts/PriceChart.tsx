@@ -19,7 +19,7 @@ interface PriceChartProps {
 
 export default function PriceChart({ 
   tokenSymbol = 'SINCO', 
-  tokenAddress = 'CONTRACT_ADDRESS_PLACEHOLDER_UPDATE_AT_LAUNCH', 
+  tokenAddress = 'ARGNs9XYtU7YFMi2FVAEEeNsX7voLWsnD9cF8uNvpump', 
   className = '' 
 }: PriceChartProps) {
   const [priceData, setPriceData] = useState<PriceData[]>([]);
